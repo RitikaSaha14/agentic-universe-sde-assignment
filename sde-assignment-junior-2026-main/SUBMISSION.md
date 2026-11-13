@@ -3,9 +3,9 @@
 > Replace everything in _italics_. Be concise: bullet points are fine. We read every word.
 
 ## Candidate
-- **Name:** _
-- **Assignment chosen:** _A (Data) / B (Workflow)_
-- **Time spent (honest estimate):** _e.g. 7h_
+- **Name:** _ Ritika Saha
+- **Assignment chosen:** _A (Data)
+- **Time spent (honest estimate):** _7h
 
 ## How to run
 ```bash
