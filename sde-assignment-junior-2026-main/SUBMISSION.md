@@ -43,18 +43,58 @@ _Every place where you made a call the spec didn't make for you, and why._
 
 | Decision | Why | Alternative considered |
 |---|---|---|
-| _ | _ | _ |
+| SQLite for persistence | Simple local setup and sufficient for the assignment's scale | PostgreSQL |
+| Fernet encryption for phone numbers and customer names | Protects personally identifiable information at rest | Plaintext storage |
+| Keyed HMAC-SHA256 for phone matching | Enables deterministic matching without storing plaintext phone numbers | Hashing without a secret |
+| Immutable event records keyed by event ID | Prevents duplicate event processing and preserves the original event history | Updating existing event records |
+| Resolve event-to-lead relationships during reporting | Allows previously orphaned events to become linked when leads arrive later | Permanently storing unresolved relationships |
+| Day-first date parsing | Follows the assignment's expected input convention | Locale-dependent date parsing |
 
 ## Failure modes considered
-_What can go wrong and how your solution handles it (bad input, re-runs, crashes, timeouts,
-duplicates...). Also list anything you know is **not** handled._
+- Invalid phone numbers are rejected during normalization.
+- Invalid or impossible dates are rejected.
+- Duplicate event IDs are ignored.
+- Re-ingesting an already processed lead file does not increase lead counts.
+- Orphan events are retained and can become linkable when a matching lead is ingested later.
+- Disposition overrides take precedence over normal disposition events.
+- The encryption key must remain stable across runs against the same database.
+
+Known limitations:
+- Encryption key rotation requires a planned re-encryption migration.
+- SQLite is intended for this assignment's local workload rather than high-concurrency production use.
+- Production-scale monitoring, automated recovery and distributed processing are outside the current implementation.
 
 ## Testing
-_What you tested, what you didn't, and why._
+Automated tests are included for:
 
+- Indian phone number normalization and invalid number rejection.
+- Day-first date parsing and impossible date validation.
+- Decimal parsing and currency formatting.
+- Disposition override precedence.
+- Latest disposition selection when no override exists.
+- Lead bucket priority and classification.
+- Orphan event recovery after a matching lead is ingested.
+- Lead re-ingestion idempotency and counter consistency.
+
+Run tests using:
+
+python -m pytest solution/tests -q
 ## Results
-_For A: timings, and anything surprising in the data. For B: your `/admin/report` summary from
-a full run, ideally one that includes a `kill -9`._
+- Successfully implemented the Assignment A ingestion and reporting pipeline using Python and SQLite.
+- Added automated tests covering core normalization, classification, disposition and idempotency behavior.
+- Verified that an initially orphaned event becomes linked after the corresponding lead is ingested.
+- Verified that re-ingesting the same lead file does not increase the lead count.
+
+Report outputs:
+- batch_summary.csv
+- daily_overview.csv
+- lead_report.csv
+- rejections.csv
+- data_quality.json
 
 ## If I had another day
-_What you'd do next, in priority order._
+1. Add more integration tests using larger and dirtier synthetic datasets.
+2. Improve structured logging and error diagnostics for failed ingestion batches.
+3. Add a documented encryption key rotation and recovery process.
+4. Benchmark ingestion and reporting performance with larger datasets.
+5. Improve database indexing and query performance where needed.
