@@ -3,9 +3,9 @@
 > Replace everything in _italics_. Be concise: bullet points are fine. We read every word.
 
 ## Candidate
-- **Name:** _ Ritika Saha
-- **Assignment chosen:** _A (Data)
-- **Time spent (honest estimate):** _7h
+- **Name:** Ritika Saha
+- **Assignment chosen:** A (Data)
+- **Time spent (honest estimate):** 7h
 
 ## How to run
 ```bash
@@ -26,7 +26,7 @@ python -m pytest solution/tests -q
 ```
 
 ## Design
-_The implementation uses Python 3.11+ with SQLite as the persistent storage layer.
+The implementation uses Python 3.11+ with SQLite as the persistent storage layer.
 
 - Leads are ingested from CSV files and stored with encrypted customer information.
 - Phone numbers are encrypted using Fernet. A keyed HMAC-SHA256 digest enables deterministic matching without storing plaintext phone numbers.
@@ -36,7 +36,7 @@ _The implementation uses Python 3.11+ with SQLite as the persistent storage laye
 - Only `disposition.override` events use `call_id` for linking; other event types require a matching valid phone number.
 - Reports are generated from the stored interaction ledger and current lead data.
 
-The encryption key must remain stable for the lifetime of a database. Key rotation would require a planned re-encryption migration._
+The encryption key must remain stable for the lifetime of a database. Key rotation would require a planned re-encryption migration.
 
 ## Decisions & assumptions
 _Every place where you made a call the spec didn't make for you, and why._
